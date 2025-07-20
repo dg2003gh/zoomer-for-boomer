@@ -3,7 +3,7 @@ CFLAGS = -I include/headers -Wall -Wextra -O2
 LDFLAGS = -lraylib -lwayland-client -lpng -lm
 
 SRC = src/main.c $(wildcard include/*.c)
-BIN = dist/fzb
+BIN = dist/zfb
 
 all: build
 

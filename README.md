@@ -1,6 +1,6 @@
-# 🖥️ fzb – Zoomer for Boomer
+# 🖥️ zfb – Zoomer for Boomer
 
-`fzb` is a lightweight zoomer tool for Linux desktops using Wayland. It allows you to zoom in/out, move around, and draw on the screen. Built with Raylib and Wayland.
+`zfb` is a lightweight zoomer tool for Linux desktops using Wayland. It allows you to zoom in/out, move around, and draw on the screen. Built with Raylib and Wayland.
 
 ## Inspired by boomer by tsoding
 
