@@ -21,24 +21,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#define _POSIX_C_SOURCE 200112L
-#include "headers/screenshot.h"
-#include "headers/wlr-screencopy-unstable-v1-client-protocol.h"
-#include <assert.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <png.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/mman.h>
-#include <sys/param.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <wayland-client-protocol.h>
+#include "headers/screenshot_wayland.h"
 
 struct format {
   enum wl_shm_format wl_format;
@@ -231,7 +214,7 @@ static void write_image(char *filename, enum wl_shm_format wl_fmt, int width,
   fclose(f);
 }
 
-int screenshot(char path[]) {
+int wl_screenshot(char path[]) {
   struct wl_display *display = wl_display_connect(NULL);
   if (display == NULL) {
     perror("failed to create display");

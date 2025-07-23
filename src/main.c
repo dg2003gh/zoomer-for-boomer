@@ -2,9 +2,14 @@
 #include <raymath.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
-#include "../include/headers/screenshot.h"
+#include "../include/headers/screenshot_wayland.h"
+
+#define Font X11Font
+#include "../include/headers/screenshot_x11.h"
+#undef Font
 
 #define TRANSPARENT (Color){0, 0, 0, 0}
 #define DARKOVERLAY (Color){0, 0, 0, 200}
@@ -21,7 +26,7 @@ typedef struct {
   int life;
 } FadingPoint;
 
-void raylibInit(char image_path[], float factor);
+void raylibInit(int isScreenshot, char image_path[], float factor);
 void inputHandler(Vector2 *position, float *zoom, float *factor);
 static void help();
 
@@ -51,20 +56,35 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  raylibInit(imagePath, factor);
+  const char *session_type = getenv("XDG_SESSION_TYPE");
+  const char *wayland_display = getenv("WAYLAND_DISPLAY");
+  const char *x11_display = getenv("DISPLAY");
+
+  int isScreenshot = 0;
+
+  if (session_type) {
+    if (strcmp(session_type, "wayland") == 0 || wayland_display) {
+      printf("You're running on Wayland...\n");
+      // just stole it from sway ngl
+      isScreenshot = wl_screenshot(imagePath);
+    } else if (strcmp(session_type, "x11") == 0 || x11_display) {
+      printf("You're running on X11...\n");
+      x11_screenshot(imagePath);
+    }
+  }
+
+  raylibInit(isScreenshot, imagePath, factor);
 
   return EXIT_SUCCESS;
 }
 
-void raylibInit(char imagePath[], float factor) {
-  SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_FULLSCREEN_MODE |
-                 FLAG_BORDERLESS_WINDOWED_MODE | FLAG_WINDOW_TOPMOST |
-                 FLAG_WINDOW_UNDECORATED);
+void raylibInit(int isScreenshot, char imagePath[], float factor) {
+  SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_BORDERLESS_WINDOWED_MODE |
+                 FLAG_WINDOW_TOPMOST | FLAG_WINDOW_UNDECORATED);
 
-  InitWindow(800, 600, "Zoomer for boomer");
+  InitWindow(GetMonitorWidth(0), GetMonitorHeight(0), "Zoomer for boomer");
   SetTargetFPS(60);
 
-  int isScreenshot = screenshot(imagePath);
   if (isScreenshot == EXIT_FAILURE)
     exit(EXIT_FAILURE);
 
