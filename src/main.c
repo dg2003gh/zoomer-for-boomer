@@ -26,7 +26,8 @@ typedef struct {
   int life;
 } FadingPoint;
 
-void raylibInit(int isScreenshot, char image_path[], float factor);
+void raylibInit(int isScreenshot, char image_path[], float factor,
+                unsigned int flags);
 void inputHandler(Vector2 *position, float *zoom, float *factor);
 static void help();
 
@@ -60,27 +61,31 @@ int main(int argc, char *argv[]) {
   const char *wayland_display = getenv("WAYLAND_DISPLAY");
   const char *x11_display = getenv("DISPLAY");
 
-  int isScreenshot = 0;
+  int isScreenshot = 1;
+  unsigned int flags = FLAG_BORDERLESS_WINDOWED_MODE | FLAG_WINDOW_TOPMOST |
+                       FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TRANSPARENT;
 
   if (session_type) {
     if (strcmp(session_type, "wayland") == 0 || wayland_display) {
       printf("You're running on Wayland...\n");
       // just stole it from sway ngl
       isScreenshot = wl_screenshot(imagePath);
+      flags |= FLAG_FULLSCREEN_MODE;
     } else if (strcmp(session_type, "x11") == 0 || x11_display) {
       printf("You're running on X11...\n");
       x11_screenshot(imagePath);
     }
   }
 
-  raylibInit(isScreenshot, imagePath, factor);
+  raylibInit(isScreenshot, imagePath, factor, flags);
 
   return EXIT_SUCCESS;
 }
 
-void raylibInit(int isScreenshot, char imagePath[], float factor) {
-  SetConfigFlags(FLAG_WINDOW_TRANSPARENT | FLAG_BORDERLESS_WINDOWED_MODE |
-                 FLAG_WINDOW_TOPMOST | FLAG_WINDOW_UNDECORATED);
+void raylibInit(int isScreenshot, char imagePath[], float factor,
+                unsigned int flags) {
+
+  SetConfigFlags(flags);
 
   InitWindow(GetMonitorWidth(0), GetMonitorHeight(0), "Zoomer for boomer");
   SetTargetFPS(60);
