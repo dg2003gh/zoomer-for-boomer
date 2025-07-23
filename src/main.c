@@ -63,7 +63,8 @@ int main(int argc, char *argv[]) {
 
   int isScreenshot = 1;
   unsigned int flags = FLAG_BORDERLESS_WINDOWED_MODE | FLAG_WINDOW_TOPMOST |
-                       FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TRANSPARENT;
+                       FLAG_WINDOW_UNDECORATED | FLAG_WINDOW_TRANSPARENT |
+                       FLAG_MSAA_4X_HINT;
 
   if (session_type) {
     if (strcmp(session_type, "wayland") == 0 || wayland_display) {
